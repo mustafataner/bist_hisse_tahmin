@@ -10,15 +10,14 @@ START = "2018-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
 st.write("""
-# kripto fiyat tahmin uygulaması
-
+# bist fiyat tahmin uygulaması
+**KULLANIM: EREGL.IS','SASA.IS','TUPRS.IS','ASELS.IS','BIMAS.IS','SISE.IS hisselerinden birini seçerek prophet tahminleme modeli ile 2 ay sonraki hisseleeri tahmin etmek için yazılmıştır.
 **YASAL UYARI:** Bu uygulama yalnızca deneme amaçlıdır. Yatırım tavsiyesi değildir. Bu uygulamada sunulan verilerin doğruluğu veya eksiksizliği konusunda herhangi bir sorumluluk kabul edilmemektedir. Lütfen yatırım kararları vermeden önce uzman bir danışmana başvurunuz.
 """)
 
+st.title('bist fiyat tahmin uygulaması')
 
-st.title('kripto fiyat tahmin uygulaması')
-
-stocks = ('BTC-USD', 'ETH-USD',  'DOT-USD')
+stocks = ('EREGL.IS','SASA.IS','TUPRS.IS','ASELS.IS','BIMAS.IS','SISE.IS')
 selected_stock = st.selectbox('TAHMİN İÇİN VERİ SETİNİ SEÇİNİZ', stocks)
 
 # selected_stock = st.text_input("Hisse senedi sembolünü girin (Örn: AAPL):") böyle kullanıcı girecektir
@@ -28,7 +27,7 @@ n_years = 2
 period = 60
 
 
-@st.cache_data
+@st.cache_data(ttl=60 * 5)
 def load_data(ticker):
     data = yf.download(ticker, START, TODAY)
     data.reset_index(inplace=True)
@@ -49,12 +48,11 @@ def plot_raw_data():
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name="stock_open", line=dict(color='red')))
     fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name="stock_close", line=dict(color='green')))
     fig.layout.update(title_text='ZAMAN SERİSİ VERİLERİ', xaxis_rangeslider_visible=True)
-    st.plotly_chart(fig)
 
+    st.plotly_chart(fig, use_container_width=True)
 
 
 plot_raw_data()
-
 
 df_train = data[['Date', 'Close']]
 df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
@@ -64,15 +62,14 @@ m.fit(df_train)
 future = m.make_future_dataframe(periods=period)
 forecast = m.predict(future)
 
-
 st.subheader('TAHMİN VERİLERİ')
 st.write(forecast.tail())
 
-st.write(f" {n_years} AYLIK TAHMİN GRAFİĞİ \n (kırmızı çizgiler tahmin, mavi çizgiler gerçek değerleridir.)")
+st.write(f" {n_years} AYLIK TAHMİN GRAFİĞİ \n(kırmızı çizgiler tahmin, mavi çizgiler gerçek değerleridir.)")
 fig1 = plot_plotly(m, forecast)
 fig1.update_traces(line=dict(color='red'), marker=dict(color='blue'))
-st.plotly_chart(fig1)
 
+st.plotly_chart(fig1, use_container_width=True)
 
 st.write("tahmin bileşenleri")
 fig2 = m.plot_components(forecast)
