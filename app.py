@@ -17,7 +17,7 @@ st.write("""
 
 st.title('bist fiyat tahmin uygulaması')
 
-stocks = ('EREGL.IS','SASA.IS','TUPRS.IS','ASELS.IS','BIMAS.IS','SISE.IS')
+stocks = ('EREGL.IS','SASA.IS','TUPRS.IS','ASELS.IS','BIMAS.IS','SISE.IS','BUCIM.IS')
 selected_stock = st.selectbox('TAHMİN İÇİN VERİ SETİNİ SEÇİNİZ', stocks)
 
 # selected_stock = st.text_input("Hisse senedi sembolünü girin (Örn: AAPL):") böyle kullanıcı girecektir
